@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A special video edit crafted just for Golyaa." />
+    <title>Chapter 5: A Video For Golyaa 🎬</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Great+Vibes&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/wish.css" />
+  </head>
+  <body class="is-dark">
+    <main class="journey" data-chapter="5">
+      <section class="video-level" aria-label="Video premiere for Golyaa">
+        <div id="videoFlash" class="video-overlay-flash" aria-hidden="true"></div>
+
+        <!-- Sequential text prompt slides -->
+        <div class="video-prompt-container" id="videoPromptContainer">
+          <p id="videoPrompt" class="video-prompt"></p>
+          <button id="skipIntroBtn" class="skip-intro-btn" type="button">Skip to Video ➔</button>
+        </div>
+
+        <!-- Cinema Video Section (transitions in after text slides complete) -->
+        <div class="cinema-section" id="cinemaSection">
+          <div class="cinema-heading">
+            <p class="cinema-kicker">A Special Edit • For Golyaa</p>
+            <h2 class="cinema-title">Just For You, Golyaa 🍿</h2>
+            <p class="cinema-subtitle">Hit play and enjoy your special video edit ✨</p>
+          </div>
+
+          <!-- Video Player Card -->
+          <div class="video-card">
+            <div class="video-glow"></div>
+            <div class="video-wrapper">
+              <video
+                id="mainVideo"
+                class="video-player"
+                playsinline
+                controls
+                preload="metadata"
+              >
+                <source src="video.mp4" type="video/mp4" />
+                <source src="surprise/video.mp4" type="video/mp4" />
+                Your browser does not support HTML5 video.
+              </video>
+
+              <!-- Optional custom big play overlay before playing -->
+              <div id="videoPlayOverlay" class="video-play-overlay">
+                <button id="customPlayBtn" class="big-play-btn" type="button" aria-label="Play video">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <p class="overlay-hint">Tap to play video</p>
+              </div>
+            </div>
+
+            <!-- Optional Local File Loader (hidden by default since video.mp4 is loaded) -->
+            <div id="videoFileHelper" class="video-file-helper" style="display: none;">
+              <p class="helper-text">
+                <label for="videoPickerInput" class="helper-picker-label">
+                  Swap video file
+                  <input type="file" id="videoPickerInput" accept="video/*" class="sr-only" />
+                </label>
+              </p>
+            </div>
+          </div>
+
+          <!-- Interaction Actions -->
+          <div class="video-action-card">
+            <button id="nextToEndingBtn" class="primary-button action-btn" type="button" style="display: inline-flex; align-items: center; justify-content: center;">
+              One Last Note 🌙 
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.15rem; height: 1.15rem; margin-left: 0.35rem; display: inline-block; vertical-align: middle;">
+                <path d="M12 2l2.4 5.2 5.6 2.4-5.6 2.4-2.4 5.2-2.4-5.2-5.6-2.4 5.6-2.4zM20 16l1.2 2.6 2.8 1.2-2.8 1.2-1.2 2.6-1.2-2.6-2.8-1.2 2.8-1.2zM6 15l1.2 2.6 2.8 1.2-2.8 1.2-1.2 2.6-1.2-2.6-2.8-1.2 2.8-1.2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/shared.js"></script>
+    <script src="js/wish.js"></script>
+  </body>
+</html>
