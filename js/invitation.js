@@ -266,6 +266,9 @@ function initInvitationPage() {
           invitationSection.classList.remove("is-hidden");
           invitationSection.classList.add("is-revealed");
         }
+        if (typeof updateProgressIndicator === "function") {
+          updateProgressIndicator();
+        }
       }, 650);
     }, 1200);
   }

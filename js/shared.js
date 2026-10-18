@@ -77,25 +77,41 @@ function createAmbientParticles() {
   particleLayer.appendChild(fragment);
 }
 
+// Top Navigation Bar Container
+function getOrCreateTopNavBar() {
+  let navBar = document.getElementById("topNavBar");
+  if (!navBar) {
+    navBar = document.createElement("header");
+    navBar.id = "topNavBar";
+    navBar.className = "top-bar-nav";
+    document.body.appendChild(navBar);
+  }
+  return navBar;
+}
+
 // Progress Indicator Logic
 function updateProgressIndicator() {
   const mainJourney = document.querySelector("main.journey");
-  let progressPill = document.querySelector(".progress-indicator");
-
   if (!mainJourney) return;
-  const chapter = mainJourney.getAttribute("data-chapter");
 
-  if (chapter && parseInt(chapter, 10) >= 1 && parseInt(chapter, 10) <= 5) {
-    const html = `Chapter ${chapter} of 6 <span aria-hidden="true" class="progress-heart-container" style="color: var(--pink); display: inline-flex; align-items: center; margin-left: 0.3rem; vertical-align: middle; width: 0.95rem; height: 0.95rem;"><svg viewBox="0 0 24 24" fill="currentColor" style="width: 100%; height: 100%;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>`;
-    if (progressPill) {
-      progressPill.style.display = "";
-      progressPill.innerHTML = html;
-    } else {
+  const navBar = getOrCreateTopNavBar();
+  let progressPill = document.getElementById("progressIndicator");
+
+  const chapter = mainJourney.getAttribute("data-chapter");
+  const lockSection = document.getElementById("lockSection");
+  const isLockScreenActive = lockSection && lockSection.style.display !== "none" && !lockSection.classList.contains("fade-out");
+
+  // Only show progress indicator when on chapters 1 to 5 and lock screen is not active
+  if (!isLockScreenActive && chapter && parseInt(chapter, 10) >= 1 && parseInt(chapter, 10) <= 5) {
+    const html = `Chapter ${chapter} of 6 <span aria-hidden="true" class="progress-heart-container" style="color: var(--pink); display: inline-flex; align-items: center; margin-left: 0.35rem; vertical-align: middle; width: 0.95rem; height: 0.95rem;"><svg viewBox="0 0 24 24" fill="currentColor" style="width: 100%; height: 100%;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>`;
+    if (!progressPill) {
       progressPill = document.createElement("div");
+      progressPill.id = "progressIndicator";
       progressPill.className = "progress-indicator";
-      progressPill.innerHTML = html;
-      document.body.appendChild(progressPill);
+      navBar.prepend(progressPill);
     }
+    progressPill.innerHTML = html;
+    progressPill.style.display = "inline-flex";
   } else if (progressPill) {
     progressPill.style.display = "none";
   }
@@ -262,7 +278,8 @@ function injectMusicPill() {
     }
   });
 
-  document.body.appendChild(pill);
+  const navBar = getOrCreateTopNavBar();
+  navBar.appendChild(pill);
 }
 
 function updateMusicPill(isPlaying) {

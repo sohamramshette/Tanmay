@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: max(3.5rem, calc(env(safe-area-inset-top) + 2.8rem)) clamp(0.75rem, 3.5vw, 1.5rem) max(2.2rem, env(safe-area-inset-bottom));
+  padding: max(4.2rem, calc(env(safe-area-inset-top) + 3.4rem)) clamp(0.75rem, 3.5vw, 1.5rem) max(2.2rem, env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow-y: auto;
   z-index: 2;

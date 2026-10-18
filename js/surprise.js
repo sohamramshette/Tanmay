@@ -54,6 +54,12 @@ function initSurprisePage() {
     
     revealBoxButton.classList.add("is-open");
 
+    // Update subtitle with guidance
+    const subtitle = document.querySelector(".level-heading p:last-child");
+    if (subtitle) {
+      subtitle.textContent = "Our memories together 💕 (Tap any photo to zoom)";
+    }
+
     // Spawn golden sparkles rising from box center
     const boxContainer = revealBoxButton.querySelector(".luxury-gift");
     if (boxContainer) {
@@ -63,22 +69,22 @@ function initSurprisePage() {
     // Start sparkles and confetti
     startConfetti();
 
-    // Create and animate floating polaroids
+    // Create and animate floating polaroids in responsive grid
     createFloatingMemories();
 
     // Show Voice Note Player if URL exists
     if (voiceNoteUrl && voiceNotePlayer) {
       setTimeout(() => {
         voiceNotePlayer.classList.add("is-visible");
-      }, 1500);
+      }, 1400);
     }
 
-    // Show step navigation button after a delay
+    // Show step navigation button after cards appear
     setTimeout(() => {
       if (nextPageButton) {
         nextPageButton.classList.add("is-visible");
       }
-    }, 4500);
+    }, 2400);
   };
 
   // 2. Polaroid generator
@@ -115,27 +121,24 @@ function initSurprisePage() {
   function createFloatingMemories() {
     if (!floatingMemories) return;
     floatingMemories.innerHTML = "";
+    floatingMemories.classList.add("is-active");
 
-    // Responsive positions using viewport relative units to avoid screen overflow
-    const positions = [
-      { left: "50%", top: "50%", x: "-27vw", y: "-22vh", rotate: "-9deg" },
-      { left: "50%", top: "50%", x: "27vw", y: "-22vh", rotate: "8deg" },
-      { left: "50%", top: "50%", x: "-25vw", y: "14vh", rotate: "6deg" },
-      { left: "50%", top: "50%", x: "25vw", y: "14vh", rotate: "-7deg" },
-    ];
+    const tilts = ["-2.5deg", "2deg", "1.8deg", "-2deg"];
 
     memoriesData.forEach((memory, index) => {
-      const pos = positions[index % positions.length];
+      const tilt = tilts[index % tilts.length];
       const card = document.createElement("div");
       card.className = "float-photo";
-      card.style.left = pos.left;
-      card.style.top = pos.top;
-      card.style.setProperty("--x", pos.x);
-      card.style.setProperty("--y", pos.y);
-      card.style.setProperty("--rotate", pos.rotate);
+      card.style.setProperty("--tilt", tilt);
+      card.style.animationDelay = `${0.1 + index * 0.16}s`;
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `View memory: ${memory.caption}`);
       card.innerHTML = `
-        <div class="photo-img" style="background-image: ${photoBackground(memory.photo, index)};"></div>
-        <span>${getCaptionWithIcon(memory.caption)}</span>
+        <div class="photo-img-wrap">
+          <div class="photo-img" style="background-image: ${photoBackground(memory.photo, index)};"></div>
+        </div>
+        <span class="photo-caption">${getCaptionWithIcon(memory.caption)}</span>
       `;
       
       // Polaroid tap-to-zoom logic
@@ -148,11 +151,14 @@ function initSurprisePage() {
         }
       });
 
-      floatingMemories.appendChild(card);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          card.click();
+        }
+      });
 
-      setTimeout(() => {
-        card.classList.add("is-visible");
-      }, 300 + index * 350);
+      floatingMemories.appendChild(card);
     });
 
     document.addEventListener("click", () => {
