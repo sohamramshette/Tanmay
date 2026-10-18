@@ -1,4 +1,6 @@
 .ending-level {
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -10,7 +12,7 @@
   overflow-x: hidden;
   background: #060308;
   color: white;
-  padding: clamp(1.5rem, 4vh, 2.5rem) clamp(1rem, 3vw, 2rem);
+  padding: max(3.5rem, calc(env(safe-area-inset-top) + 2.8rem)) clamp(0.75rem, 3.5vw, 1.5rem) max(2.2rem, env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -232,7 +234,7 @@
   pointer-events: auto;
 }
 
-@media (max-height: 560px) {
+@media (max-width: 600px), (max-height: 720px) {
   .final-note {
     position: relative;
     top: auto;

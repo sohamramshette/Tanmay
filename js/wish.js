@@ -125,6 +125,24 @@ function initWishPage() {
   }
 
   if (mainVideo) {
+    mainVideo.onloadedmetadata = () => {
+      if (mainVideo.videoWidth && mainVideo.videoHeight) {
+        const wrapper = mainVideo.closest(".video-wrapper");
+        if (wrapper) {
+          const ratio = mainVideo.videoWidth / mainVideo.videoHeight;
+          if (ratio < 1) {
+            wrapper.style.aspectRatio = `${mainVideo.videoWidth} / ${mainVideo.videoHeight}`;
+            wrapper.style.maxHeight = "68vh";
+            wrapper.style.maxWidth = "22rem";
+            wrapper.style.margin = "0 auto";
+          } else {
+            wrapper.style.aspectRatio = `${mainVideo.videoWidth} / ${mainVideo.videoHeight}`;
+            wrapper.style.maxHeight = "55vh";
+          }
+        }
+      }
+    };
+
     mainVideo.onplay = () => {
       if (videoPlayOverlay) {
         videoPlayOverlay.classList.add("is-hidden");

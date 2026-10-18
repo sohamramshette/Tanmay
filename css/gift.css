@@ -1,10 +1,12 @@
 .memory-hunt-level {
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: clamp(3.2rem, 6vh, 4.5rem) clamp(0.75rem, 3vw, 1.5rem) 2rem;
+  padding: max(3.5rem, calc(env(safe-area-inset-top) + 2.8rem)) clamp(0.75rem, 3.5vw, 1.5rem) max(1.8rem, env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow-y: auto;
   z-index: 2;

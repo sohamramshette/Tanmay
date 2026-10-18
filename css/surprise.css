@@ -1,10 +1,12 @@
 .surprise-level {
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: clamp(3.2rem, 6vh, 4.5rem) clamp(0.75rem, 3vw, 1.5rem) 2rem;
+  padding: max(3.5rem, calc(env(safe-area-inset-top) + 2.8rem)) clamp(0.75rem, 3.5vw, 1.5rem) max(2rem, env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
@@ -192,7 +194,7 @@ h2 {
 /* Interactive Polaroid Zoom */
 .float-photo.is-zoomed {
   z-index: 999;
-  transform: translate(-50%, -50%) scale(1.6) rotate(0deg) !important;
+  transform: translate(-50%, -50%) scale(2.2) rotate(0deg) !important;
   box-shadow: 0 2rem 5rem rgba(75, 30, 96, 0.45);
   animation-play-state: paused !important;
 }
