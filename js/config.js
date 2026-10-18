@@ -2,9 +2,19 @@ const BirthdayConfig = {
   // Global Settings
   birthdayPersonName: "Gauri",
   nickname: "Golyaa",
-  musicUrl: "0628.MP3", // Custom soundtrack file
+  musicUrl: "0628.mp3", // Custom soundtrack file
   voiceNoteUrl: "", // Optional voice note audio file path (e.g. "assets/audio/voice.mp3")
   videoUrl: "video.mp4", // Path to the video edit for Golyaa
+
+  // Chapter 0 - Confession Passcode Lock Settings
+  confessionQuestion: "What is the exact time he confessed to you ??",
+  confessionPin: "1209", // Hour: 12, Minute: 09
+  confessionSuccessMessage: "That's the exact moment! ❤️",
+  confessionWrongMessages: [
+    "Not quite that time, Golyaa... think back to that moment 💕",
+    "Close, but not that exact minute! 🤭",
+    "Think of when your hearts connected... 🌙"
+  ],
 
   // Chapter 2 - Memory Hunt Settings
   correctGiftIndex: 2, // 0-4 index of correct box
@@ -17,7 +27,7 @@ const BirthdayConfig = {
   ],
 
   // Chapter 3 - Letter Settings
-  letterText: "Dear Golyaa,\n\nI didn't need a special reason or an occasion to make this for you. Sometimes, you just want to remind your favorite person how much they mean to you.\n\nFrom your infectious laugh to all your silly, adorable moments, you have this effortless way of making ordinary days feel lighter and brighter. Thank you for being yourself, for all the little memories, and for just existing as my favorite human.\n\nI put together a little surprise for you because you deserve to know that you are appreciated, celebrated, and deeply valued. I hope this brings a huge smile to your face today.",
+  letterText: "Hey, my favourite girl 🥹💗\n\nI just want you to know that you mean so much to me. Your smile makes my day better, and having you in my life is something I'll always be grateful for. 🫶🏻💕\n\nNo matter what, you’ll always have a special place in my heart. I love you so much ❤️🧿",
   letterSignature: "Always with lots of love ❤️",
 
   // Chapter 4 - Surprise Box Settings

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initWishPage() {
   const videoPromptContainer = document.getElementById("videoPromptContainer");
   const videoPrompt = document.getElementById("videoPrompt");
   const skipIntroBtn = document.getElementById("skipIntroBtn");
@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!videoPrompt || !cinemaSection) return;
 
-  // 1. Text prompts sequence
   const prompts = (typeof BirthdayConfig !== "undefined" && BirthdayConfig.videoPrompts)
     ? BirthdayConfig.videoPrompts
     : [
@@ -33,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
       videoPrompt.textContent = prompts[promptIndex];
       videoPrompt.classList.add("is-visible");
 
-      // Keep visible for 1.8s, then fade out
       promptTimer = setTimeout(() => {
         if (isSkipped) return;
         videoPrompt.classList.remove("is-visible");
@@ -66,16 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (skipIntroBtn) {
-    skipIntroBtn.addEventListener("click", (e) => {
+    skipIntroBtn.onclick = (e) => {
       e.stopPropagation();
       showCinemaSection();
-    });
+    };
   }
 
-  // Start sequence
   setTimeout(nextPrompt, 600);
 
-  // 2. Video Player Integration
+  // Set video source from config if specified
   if (typeof BirthdayConfig !== "undefined" && BirthdayConfig.videoUrl) {
     if (mainVideo && !mainVideo.getAttribute("src")) {
       const source = mainVideo.querySelector("source");
@@ -88,72 +85,78 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Handle Play trigger
-  function handlePlayVideo() {
-    if (!mainVideo) return;
-
-    // Pause global background music so it doesn't clash with video audio
-    if (typeof fadeOutMusic === "function") {
-      fadeOutMusic(600);
+  function pauseSongForVideo() {
+    if (typeof pauseMusicForVideo === "function") {
+      pauseMusicForVideo();
     } else {
+      sessionStorage.setItem("videoPlaying", "true");
       const bgAudio = document.getElementById("global-background-music");
       if (bgAudio) bgAudio.pause();
     }
+  }
 
+  function resumeSongAfterVideo() {
+    if (typeof resumeMusicAfterVideo === "function") {
+      resumeMusicAfterVideo();
+    } else {
+      sessionStorage.removeItem("videoPlaying");
+      const bgAudio = document.getElementById("global-background-music");
+      if (bgAudio) bgAudio.play().catch(() => {});
+    }
+  }
+
+  function handlePlayVideo() {
+    if (!mainVideo) return;
+    pauseSongForVideo();
     if (videoPlayOverlay) {
       videoPlayOverlay.classList.add("is-hidden");
     }
-
     mainVideo.play().catch((err) => {
       console.log("Video play request handled: ", err);
     });
   }
 
   if (customPlayBtn) {
-    customPlayBtn.addEventListener("click", handlePlayVideo);
+    customPlayBtn.onclick = handlePlayVideo;
   }
 
   if (videoPlayOverlay) {
-    videoPlayOverlay.addEventListener("click", handlePlayVideo);
+    videoPlayOverlay.onclick = handlePlayVideo;
   }
 
   if (mainVideo) {
-    mainVideo.addEventListener("play", () => {
+    mainVideo.onplay = () => {
       if (videoPlayOverlay) {
         videoPlayOverlay.classList.add("is-hidden");
       }
-      // Duck background audio
-      const bgAudio = document.getElementById("global-background-music");
-      if (bgAudio && !bgAudio.paused) {
-        bgAudio.pause();
-      }
-    });
+      pauseSongForVideo();
+    };
 
-    mainVideo.addEventListener("ended", () => {
-      // Video completed! Trigger celebration sparkles & flash
+    mainVideo.onplaying = () => {
+      pauseSongForVideo();
+    };
+
+    mainVideo.onpause = () => {
+      if (!mainVideo.ended) {
+        resumeSongAfterVideo();
+      }
+    };
+
+    mainVideo.onended = () => {
       if (videoFlash) {
         videoFlash.classList.add("is-active");
       }
       spawnCelebrationParticles();
+      resumeSongAfterVideo();
 
-      // Resume background music gently
-      if (typeof fadeInMusic === "function") {
-        fadeInMusic(0.5, 1500);
-      } else {
-        const bgAudio = document.getElementById("global-background-music");
-        if (bgAudio) bgAudio.play().catch(() => {});
-      }
-
-      // Haptic feedback
       if (navigator.vibrate) {
         navigator.vibrate([100, 50, 100]);
       }
-    });
+    };
   }
 
-  // 3. Local Video Picker Support
   if (videoPickerInput && mainVideo) {
-    videoPickerInput.addEventListener("change", function () {
+    videoPickerInput.onchange = function () {
       if (this.files && this.files[0]) {
         const file = this.files[0];
         const blobUrl = URL.createObjectURL(file);
@@ -161,21 +164,20 @@ document.addEventListener("DOMContentLoaded", () => {
         mainVideo.load();
         handlePlayVideo();
       }
-    });
+    };
   }
 
-  // 4. Navigation to Ending Page
   if (nextToEndingBtn) {
-    nextToEndingBtn.addEventListener("click", () => {
+    nextToEndingBtn.onclick = () => {
+      resumeSongAfterVideo();
       if (typeof navigateWithTransition === "function") {
         navigateWithTransition("ending.html");
       } else {
         window.location.href = "ending.html";
       }
-    });
+    };
   }
 
-  // 5. Particle Effects generator
   function spawnCelebrationParticles() {
     const container = document.querySelector(".cinema-section");
     if (!container) return;
@@ -205,4 +207,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 2600);
     }
   }
-});
+}
+
+window.initWishPage = initWishPage;
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initWishPage);
+} else {
+  initWishPage();
+}

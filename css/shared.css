@@ -286,6 +286,96 @@ main.journey.is-active {
   .aura-three { width: 14rem; height: 14rem; bottom: -5rem; }
 }
 
+/* Floating Glassmorphic Music Pill */
+.music-pill {
+  position: fixed;
+  top: max(0.8rem, env(safe-area-inset-top));
+  right: clamp(0.75rem, 3vw, 1.5rem);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.36rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0.5rem 1.8rem rgba(90, 35, 110, 0.12);
+  color: #ff527c;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  user-select: none;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+body.is-dark .music-pill {
+  background: rgba(33, 17, 38, 0.7);
+  border: 1px solid rgba(255, 112, 173, 0.35);
+  color: #ffd8ea;
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.35);
+}
+
+.music-pill:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0.8rem 2.2rem rgba(155, 93, 229, 0.3);
+}
+
+.music-pill:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.music-pill-icon {
+  font-size: 0.95rem;
+  display: inline-block;
+  line-height: 1;
+}
+
+.music-pill.is-playing .music-pill-icon {
+  animation: pulseMusic 2s ease-in-out infinite;
+}
+
+.music-pill-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 13px;
+}
+
+.music-pill-bars .bar {
+  width: 2.5px;
+  background: currentColor;
+  border-radius: 1.5px;
+  height: 3px;
+  transition: height 0.25s ease;
+}
+
+.music-pill.is-playing .bar-1 {
+  animation: barBounce 0.8s ease-in-out infinite alternate;
+}
+.music-pill.is-playing .bar-2 {
+  animation: barBounce 1.1s ease-in-out 0.25s infinite alternate;
+}
+.music-pill.is-playing .bar-3 {
+  animation: barBounce 0.95s ease-in-out 0.5s infinite alternate;
+}
+
+.music-pill.is-paused .bar {
+  height: 2.5px;
+  opacity: 0.45;
+}
+
+@keyframes barBounce {
+  0% { height: 3px; }
+  100% { height: 13px; }
+}
+
+@keyframes pulseMusic {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+
 /* Respect user preferences for reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {

@@ -1,0 +1,9 @@
+{
+  "name": "birthday-gift-website",
+  "version": "1.0.0",
+  "description": "Handcrafted Birthday Gift Website",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx -y serve . -l 8000"
+  }
+}

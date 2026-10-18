@@ -1,8 +1,9 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initGiftPage() {
   const giftGrid = document.getElementById("giftGrid");
   const huntMessage = document.getElementById("huntMessage");
 
   if (!giftGrid || !huntMessage) return;
+  giftGrid.innerHTML = ""; // Clear existing boxes if re-initializing
 
   // 1. Randomly assign the correct box index between 0 and 4 on every refresh
   const correctIndex = Math.floor(Math.random() * 5);
@@ -80,4 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < 5; i++) {
     giftGrid.appendChild(createGiftBox(i));
   }
-});
+}
+
+window.initGiftPage = initGiftPage;
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initGiftPage);
+} else {
+  initGiftPage();
+}

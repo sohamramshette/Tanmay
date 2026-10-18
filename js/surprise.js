@@ -1,13 +1,30 @@
-document.addEventListener("DOMContentLoaded", () => {
+let surpriseConfettiFrame = null;
+
+function initSurprisePage() {
   const revealBoxButton = document.getElementById("revealBoxButton");
   const floatingMemories = document.getElementById("floatingMemories");
   const voiceNotePlayer = document.getElementById("voiceNotePlayer");
   const playBtn = document.getElementById("playBtn");
   const waveform = document.getElementById("waveform");
   const nextPageButton = document.getElementById("nextPageButton");
-  const confettiCanvas = document.getElementById("confettiCanvas");
+  let confettiCanvas = document.getElementById("confettiCanvas");
 
   if (!revealBoxButton) return;
+
+  if (surpriseConfettiFrame) {
+    window.cancelAnimationFrame(surpriseConfettiFrame);
+    surpriseConfettiFrame = null;
+  }
+
+  // Ensure canvas exists
+  if (!confettiCanvas) {
+    confettiCanvas = document.createElement("canvas");
+    confettiCanvas.id = "confettiCanvas";
+    confettiCanvas.className = "confetti-canvas";
+    confettiCanvas.setAttribute("aria-hidden", "true");
+    const journey = document.querySelector("main.journey") || document.body;
+    journey.prepend(confettiCanvas);
+  }
 
   const memoriesData = (typeof BirthdayConfig !== "undefined" && BirthdayConfig.floatingMemories)
     ? BirthdayConfig.floatingMemories
@@ -19,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let confettiStarted = false;
   let confettiPieces = [];
-  let confettiFrame = null;
   let voiceNoteAudio = null;
   let voiceNotePlaying = false;
 
@@ -32,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 1. Box Reveal handler
-  revealBoxButton.addEventListener("click", () => {
+  revealBoxButton.onclick = () => {
     // Prevent double clicking
     if (revealBoxButton.classList.contains("is-open")) return;
     
@@ -63,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextPageButton.classList.add("is-visible");
       }
     }, 4500);
-  });
+  };
 
   // 2. Polaroid generator
   function photoBackground(photo, fallbackIndex) {
@@ -124,12 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
       
       // Polaroid tap-to-zoom logic
       card.addEventListener("click", (e) => {
-        e.stopPropagation(); // Avoid triggering body backdrop dismiss
+        e.stopPropagation();
         const wasZoomed = card.classList.contains("is-zoomed");
-        
-        // Remove zoom from all cards
         document.querySelectorAll(".float-photo").forEach(c => c.classList.remove("is-zoomed"));
-        
         if (!wasZoomed) {
           card.classList.add("is-zoomed");
         }
@@ -137,13 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       floatingMemories.appendChild(card);
 
-      // Stagger activation
       setTimeout(() => {
         card.classList.add("is-visible");
       }, 300 + index * 350);
     });
 
-    // Dismiss zoom when tapping outside
     document.addEventListener("click", () => {
       document.querySelectorAll(".float-photo").forEach(c => c.classList.remove("is-zoomed"));
     });
@@ -184,7 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
       piece.x += piece.drift;
       piece.rotation += piece.spin;
 
-      // Wrap around bottom
       if (piece.y > window.innerHeight + 20) {
         piece.y = -20;
         piece.x = Math.random() * window.innerWidth;
@@ -198,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.restore();
     });
 
-    confettiFrame = window.requestAnimationFrame(drawConfetti);
+    surpriseConfettiFrame = window.requestAnimationFrame(drawConfetti);
   }
 
   function startConfetti() {
@@ -211,20 +221,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", () => {
     if (!confettiStarted) return;
-    window.cancelAnimationFrame(confettiFrame);
+    window.cancelAnimationFrame(surpriseConfettiFrame);
     resizeConfetti();
     drawConfetti();
   });
 
   // 4. Voice Note Audio Controls
   if (playBtn && voiceNoteAudio) {
-    playBtn.addEventListener("click", () => {
+    playBtn.onclick = () => {
       if (voiceNotePlaying) {
         pauseVoiceNote();
       } else {
         playVoiceNote();
       }
-    });
+    };
   }
 
   function playVoiceNote() {
@@ -237,12 +247,10 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     waveform.classList.add("is-playing");
     
-    // Fade out global background music
     if (typeof fadeOutMusic === "function") {
       fadeOutMusic(800);
     }
 
-    // Play voice note after a tiny gap to let music fade
     setTimeout(() => {
       if (voiceNotePlaying && voiceNoteAudio) {
         voiceNoteAudio.play().catch(e => console.log(e));
@@ -261,7 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
     waveform.classList.remove("is-playing");
     voiceNoteAudio.pause();
 
-    // Fade background music back in
     if (typeof fadeInMusic === "function") {
       fadeInMusic(0.28, 800);
     }
@@ -278,26 +285,27 @@ document.addEventListener("DOMContentLoaded", () => {
     waveform.classList.remove("is-playing");
     voiceNoteAudio.currentTime = 0;
 
-    // Fade background music back in
     if (typeof fadeInMusic === "function") {
       fadeInMusic(0.28, 800);
     }
   }
 
-  // 5. Navigate to ending page
+  // 5. Navigate to Chapter 5
   if (nextPageButton) {
-    nextPageButton.addEventListener("click", () => {
-      // Stop voice note if playing before transition
+    nextPageButton.onclick = () => {
       if (voiceNotePlaying) {
         stopVoiceNote();
       }
-
+      if (surpriseConfettiFrame) {
+        window.cancelAnimationFrame(surpriseConfettiFrame);
+        surpriseConfettiFrame = null;
+      }
       if (typeof navigateWithTransition === "function") {
         navigateWithTransition("wish.html");
       } else {
         window.location.href = "wish.html";
       }
-    });
+    };
   }
 
   function spawnGoldSparkles(container) {
@@ -331,4 +339,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => sparkle.remove(), 2500);
     }
   }
-});
+}
+
+window.initSurprisePage = initSurprisePage;
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initSurprisePage);
+} else {
+  initSurprisePage();
+}

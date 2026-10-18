@@ -1,10 +1,22 @@
-document.addEventListener("DOMContentLoaded", () => {
+let endingSlideshowTimer = null;
+let endingTextSequenceTimer = null;
+
+function initEndingPage() {
   const endingMontage = document.getElementById("endingMontage");
   const endingStars = document.getElementById("endingStars");
   const endingLine = document.getElementById("endingLine");
   const finalNote = document.getElementById("finalNote");
 
   if (!endingLine) return;
+
+  if (endingSlideshowTimer) {
+    clearInterval(endingSlideshowTimer);
+    endingSlideshowTimer = null;
+  }
+  if (endingTextSequenceTimer) {
+    clearTimeout(endingTextSequenceTimer);
+    endingTextSequenceTimer = null;
+  }
 
   const endingLines = (typeof BirthdayConfig !== "undefined" && BirthdayConfig.endingLines)
     ? BirthdayConfig.endingLines
@@ -46,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startSlideshow() {
     if (!endingMontage) return;
+    endingMontage.innerHTML = "";
     
     // Gather all photos from configuration
     const photos = [];
@@ -57,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Fallback: If no custom photos are provided, generate gradient slides
     const totalSlides = photos.length > 0 ? photos.length : 4;
     const fragment = document.createDocumentFragment();
     
@@ -70,20 +82,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     endingMontage.appendChild(fragment);
 
-    const slides = document.querySelectorAll(".montage-photo");
+    const slides = endingMontage.querySelectorAll(".montage-photo");
     if (slides.length === 0) return;
 
     let currentIndex = 0;
     slides[0].classList.add("is-active");
 
-    setInterval(() => {
+    endingSlideshowTimer = setInterval(() => {
       slides[currentIndex].classList.remove("is-active");
       currentIndex = (currentIndex + 1) % slides.length;
       
-      // Force scaling reset for Ghibli Ken Burns zoom feel
       slides[currentIndex].style.transition = "none";
       slides[currentIndex].style.transform = "scale(1.08)";
-      void slides[currentIndex].offsetWidth; // reflow
+      void slides[currentIndex].offsetWidth;
       
       slides[currentIndex].style.transition = "";
       slides[currentIndex].classList.add("is-active");
@@ -98,71 +109,62 @@ document.addEventListener("DOMContentLoaded", () => {
     return line;
   }
 
-  // 3. Play ending sequence (fade sentences one by one with drift transitions)
   function playTextSequence() {
     let lineIndex = 0;
 
     const nextLine = () => {
-      // 1. Trigger exit/leaving animation for previous sentence
       endingLine.classList.remove("is-visible");
       if (endingLine.innerHTML) {
         endingLine.classList.add("is-leaving");
       }
 
-      // 2. Wait for exit transition to complete, then load next text and fade in
       setTimeout(() => {
         endingLine.classList.remove("is-leaving");
         
         if (lineIndex < endingLines.length) {
-          // Set data-index attribute to trigger unique CSS animations for each slide
           endingLine.setAttribute("data-index", lineIndex + 1);
           endingLine.innerHTML = getEndingLineWithIcon(endingLines[lineIndex]);
           endingLine.classList.add("is-visible");
           lineIndex++;
           
-          // Show active text for 3.6s before fading out
-          setTimeout(nextLine, 3600);
+          endingTextSequenceTimer = setTimeout(nextLine, 3600);
         } else {
-          // Fade out final sentence completely
           endingLine.innerHTML = "";
-          
-          // Wait 2 seconds, then show the permanent final note
           setTimeout(() => {
             if (finalNote) {
               finalNote.classList.add("is-visible");
-              
-              // Fade out the background music volume smoothly after 5 seconds
-              setTimeout(() => {
-                if (typeof fadeOutMusic === "function") {
-                  fadeOutMusic(3000); // 3-second gentle fade out
-                }
-              }, 5000);
             }
           }, 2000);
         }
-      }, 1600); // 1.6s wait matches transition delay
+      }, 1600);
     };
 
-    // Begin sequence after a short initial delay when entering the page
     setTimeout(nextLine, 1200);
   }
 
-  // Set dark body explicitly
   document.body.classList.add("is-dark");
 
   const restartExperienceBtn = document.getElementById("restartExperienceBtn");
   if (restartExperienceBtn) {
-    restartExperienceBtn.addEventListener("click", () => {
+    restartExperienceBtn.onclick = () => {
       sessionStorage.clear();
       if (typeof navigateWithTransition === "function") {
         navigateWithTransition("index.html");
       } else {
         window.location.href = "index.html";
       }
-    });
+    };
   }
 
   spawnStars();
   startSlideshow();
   playTextSequence();
-});
+}
+
+window.initEndingPage = initEndingPage;
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initEndingPage);
+} else {
+  initEndingPage();
+}

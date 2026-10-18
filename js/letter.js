@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initLetterPage() {
   const paperCard = document.querySelector(".paper-card");
   const typedLetter = document.getElementById("typedLetter");
   const letterSignature = document.querySelector(".letter-signature");
@@ -6,13 +6,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!typedLetter) return;
 
+  typedLetter.textContent = "";
+  typedLetter.classList.remove("typing-done");
+  if (paperCard) paperCard.classList.remove("is-visible");
+  if (letterSignature) {
+    letterSignature.textContent = "";
+    letterSignature.classList.remove("is-visible");
+  }
+  if (surpriseButton) {
+    surpriseButton.classList.remove("is-visible");
+  }
+
   const letterText = (typeof BirthdayConfig !== "undefined" && BirthdayConfig.letterText)
     ? BirthdayConfig.letterText
-    : "Happy birthday...";
+    : "Hey, my favourite girl 🥹💗\n\nI just want you to know that you mean so much to me. Your smile makes my day better, and having you in my life is something I'll always be grateful for. 🫶🏻💕\n\nNo matter what, you’ll always have a special place in my heart. I love you so much ❤️🧿";
 
   const signatureText = (typeof BirthdayConfig !== "undefined" && BirthdayConfig.letterSignature)
     ? BirthdayConfig.letterSignature
-    : "With all my heart";
+    : "Always with lots of love ❤️";
+
+  let typingTimeout = null;
 
   // 1. Reveal Paper Card initially
   setTimeout(() => {
@@ -50,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
           autoScroll();
         }
 
-        setTimeout(type, delay);
+        typingTimeout = setTimeout(type, delay);
       } else {
         // Typing finished
         typedLetter.classList.add("typing-done");
@@ -82,12 +95,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle transition to next page
   if (surpriseButton) {
-    surpriseButton.addEventListener("click", () => {
+    surpriseButton.onclick = () => {
       if (typeof navigateWithTransition === "function") {
         navigateWithTransition("surprise.html");
       } else {
         window.location.href = "surprise.html";
       }
-    });
+    };
   }
-});
+}
+
+window.initLetterPage = initLetterPage;
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initLetterPage);
+} else {
+  initLetterPage();
+}
